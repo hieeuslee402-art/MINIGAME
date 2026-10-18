@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>MINI GAME TRẢ LỜI CÂU HỎI • TỔ 1 — Hiện tượng phú dưỡng</title>
+    <meta
+      name="description"
+      content="Mini game trắc nghiệm Hóa học: Hiện tượng phú dưỡng – nguyên nhân, tác hại và giải pháp. Điều khiển bằng cử chỉ bàn tay qua camera."
+    />
+    <meta name="theme-color" content="#04120f" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/stage.css" />
+    <link rel="stylesheet" href="css/slides.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+  </head>
+  <body>
+    <!-- ============ NỀN HÓA HỌC ============ -->
+    <div class="bg" aria-hidden="true">
+      <div class="bg__grid"></div>
+      <div class="bg__blob bg__blob--1"></div>
+      <div class="bg__blob bg__blob--2"></div>
+      <div class="bg__blob bg__blob--3"></div>
+      <div class="bg__equations" id="bg-equations"></div>
+      <canvas id="bg-particles"></canvas>
+    </div>
+
+    <!-- ============ SÂN KHẤU TRÌNH CHIẾU ============ -->
+    <main id="stage" class="stage">
+      <div class="stage__camera" id="camera-bg" aria-hidden="true">
+        <video id="video" autoplay muted playsinline></video>
+        <div class="stage__camera-dim"></div>
+      </div>
+
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand__flask" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M12 4h8M13.5 4v9.2L6.2 25.6A2.4 2.4 0 0 0 8.4 29h15.2a2.4 2.4 0 0 0 2.2-3.4L18.5 13.2V4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9.4 21.5h13.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="14" cy="24.6" r="1.4" fill="currentColor"/>
+              <circle cx="18.4" cy="23.4" r="1" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="brand__text">
+            <strong>PHÚ DƯỠNG</strong>
+            <em>TỔ 1 • HÓA HỌC</em>
+          </span>
+        </div>
+
+        <div class="progress" id="progress" role="progressbar" aria-label="Tiến độ bài thuyết trình">
+          <div class="progress__track"><div class="progress__fill" id="progress-fill"></div></div>
+          <div class="progress__meta">
+            <span id="progress-label">SLIDE 01 / 10</span>
+            <span class="progress__dots" id="progress-dots"></span>
+          </div>
+        </div>
+
+        <div class="topbar__actions">
+          <button class="icon-btn" id="btn-diag" type="button" title="Chẩn đoán camera" aria-label="Chẩn đoán camera">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M3.5 12h3l2-5.2 2.6 10.4 2.2-6.6 1.6 3.4h5.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-help" type="button" title="Hướng dẫn cử chỉ (H)" aria-label="Hướng dẫn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9.2 9a2.8 2.8 0 1 1 4.3 2.4c-.9.6-1.5 1.2-1.5 2.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.1" fill="currentColor"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6" opacity=".55"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-end" type="button" title="Chiếu video kết thúc (E) · búng tay" aria-label="Video kết thúc">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.6" stroke="currentColor" stroke-width="1.7"/><path d="m10.4 9.2 4.8 2.8-4.8 2.8z" fill="currentColor"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-sound" type="button" title="Bật/tắt âm thanh (S)" aria-label="Âm thanh">
+            <svg viewBox="0 0 24 24" fill="none" class="ico-sound-on"><path d="M4 9.5h3L12 6v12L7 14.5H4z" fill="currentColor"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" class="ico-sound-off"><path d="M4 9.5h3L12 6v12L7 14.5H4z" fill="currentColor"/><path d="m16 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-camera" type="button" title="Bật/tắt nền camera (V)" aria-label="Nền camera">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="6.5" width="13" height="11" rx="2.4" stroke="currentColor" stroke-width="1.7"/><path d="m16 11.2 4.2-2.4v6.4L16 12.8z" fill="currentColor"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-fullscreen" type="button" title="Toàn màn hình (F)" aria-label="Toàn màn hình">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M9 4H4v5M15 4h5v5M15 20h5v-5M9 20H4v-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="deck" id="deck" aria-live="polite"></div>
+
+      <div class="decknav" aria-hidden="false">
+        <button class="decknav__btn decknav__btn--prev" id="btn-prev" type="button" title="Slide trước (←)" aria-label="Slide trước">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M15 5.5 8.5 12 15 18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="decknav__btn decknav__btn--next" id="btn-next" type="button" title="Slide tiếp theo (→)" aria-label="Slide tiếp theo">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M9 5.5 15.5 12 9 18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <footer class="gesturebar">
+        <div class="gesturebar__chip" data-gesture="next">
+          <span class="chip__icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.4 19.6v-5.2c0-1.3.4-2.2 1.3-3.2l.8-.9.8.9c.9 1 1.3 1.9 1.3 3.2v5.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.9 19.6v-5.2c0-1.3.4-2.2 1.3-3.2l.8-.9.8.9c.9 1 1.3 1.9 1.3 3.2v5.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.3 20.4h13.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+          <span class="chip__body"><b>Giơ cả 2 tay</b><em>chuyển câu</em></span>
+        </div>
+        <div class="gesturebar__chip" data-gesture="A"><span class="chip__key">A</span><span class="chip__body"><b>Ngón cái + ngón trỏ</b><em>chạm</em></span></div>
+        <div class="gesturebar__chip" data-gesture="B"><span class="chip__key">B</span><span class="chip__body"><b>Ngón cái + ngón giữa</b><em>chạm</em></span></div>
+        <div class="gesturebar__chip" data-gesture="C"><span class="chip__key chip__key--double">C</span><span class="chip__body"><b>Ngón cái + ngón áp út</b><em>chạm</em></span></div>
+        <div class="gesturebar__chip" data-gesture="D"><span class="chip__key chip__key--double">D</span><span class="chip__body"><b>Ngón cái + ngón út</b><em>chạm</em></span></div>
+      </footer>
+
+      <!-- Camera nhỏ + vẽ khung xương bàn tay -->
+      <aside class="selfview" id="selfview" aria-label="Camera theo dõi bàn tay">
+        <div class="selfview__frame">
+          <video id="video-mini" autoplay muted playsinline></video>
+          <canvas id="hand-canvas"></canvas>
+          <div class="selfview__scan"></div>
+          <div class="selfview__badge" id="hand-badge"><i></i>ĐƯA BÀN TAY VÀO KHUNG…</div>
+          <div class="selfview__stats" id="selfview-stats">-- FPS</div>
+        </div>
+        <div class="selfview__caption">CAMERA THEO DÕI BÀN TAY</div>
+      </aside>
+
+      <div class="toast-layer" id="toast-layer"></div>
+      <canvas class="fx-canvas" id="fx-canvas" aria-hidden="true"></canvas>
+      <div class="stage__flash" id="stage-flash" aria-hidden="true"></div>
+    </main>
+
+    <!-- ============ CỔNG BẮT ĐẦU / XIN QUYỀN CAMERA ============ -->
+    <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+      <div class="gate__bg"></div>
+      <div class="gate__card" id="gate-card">
+        <div class="gate__visual" aria-hidden="true">
+          <svg viewBox="0 0 120 120" fill="none" class="gate__flask">
+            <path d="M48 18h24m-20 0v30L22 94a8 8 0 0 0 7 12h62a8 8 0 0 0 7-12L68 48V18" stroke="url(#g1)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M34 82h52l9 16a8 8 0 0 1-7 12H32a8 8 0 0 1-7-12z" fill="url(#g2)" opacity=".55"/>
+            <path d="M34 82h52" stroke="url(#g1)" stroke-width="3.4" stroke-linecap="round"/>
+            <circle cx="50" cy="92" r="3.4" fill="#7dfcc0" opacity=".8"/>
+            <circle cx="64" cy="98" r="2.4" fill="#7dfcc0" opacity=".6"/>
+            <circle cx="72" cy="88" r="2" fill="#7dfcc0" opacity=".7"/>
+            <defs>
+              <linearGradient id="g1" x1="20" y1="16" x2="100" y2="106" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#5ef2c0"/><stop offset="1" stop-color="#3db8ff"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="20" y1="82" x2="100" y2="110" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#5ef2c0" stop-opacity=".9"/><stop offset="1" stop-color="#0f766e" stop-opacity=".2"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="gate__orbit gate__orbit--1"></span>
+          <span class="gate__orbit gate__orbit--2"></span>
+        </div>
+
+        <p class="gate__eyebrow">MINI GAME TRẢ LỜI CÂU HỎI • TỔ 1</p>
+        <h1 class="gate__title" id="gate-title">HIỆN TƯỢNG <span>PHÚ DƯỠNG</span></h1>
+        <p class="gate__sub">Nguyên nhân, tác hại và giải pháp — điều khiển bằng cử chỉ bàn tay</p>
+
+        <ol class="gate__steps" id="gate-steps">
+          <li><b>1</b><span>Bấm <strong>BẮT ĐẦU</strong> và <strong>CHO PHÉP CAMERA</strong> khi trình duyệt hỏi.</span></li>
+          <li><b>2</b><span>Đưa <strong>bàn tay</strong> (trái hoặc phải) vào khung hình, cách camera khoảng 40–70 cm.</span></li>
+          <li><b>3</b><span><strong>Chạm 2 đầu ngón</strong> để chọn đáp án; <strong>giơ cả 2 tay</strong> để chuyển câu.</span></li>
+        </ol>
+
+        <div class="gate__banner" id="gate-banner" hidden>
+          <b>KHÔNG MỞ ĐƯỢC CAMERA TRONG KHUNG XEM TRƯỚC</b>
+          <p>
+            Bạn đang xem trang trong <strong>khung xem trước (iframe)</strong> — trình duyệt chặn camera ở đây.
+            Hãy mở web bằng một tab riêng: chạy <code>npm start</code> rồi vào <code>http://localhost:3000</code>,
+            hoặc bản GitHub Pages. Trong lúc chờ, vẫn chơi được bằng chuột / bàn phím.
+          </p>
+        </div>
+
+        <div class="gate__error" id="gate-error" hidden>
+          <b id="gate-error-title">Không mở được camera</b>
+          <p id="gate-error-text"></p>
+        </div>
+
+        <div class="gate__actions">
+          <button class="btn btn--primary btn--glow" id="btn-start" type="button">
+            <span class="btn__dot"></span> BẮT ĐẦU &amp; BẬT CAMERA
+          </button>
+          <button class="btn btn--ghost" id="btn-skip" type="button">Chơi bằng chuột / bàn phím</button>
+        </div>
+
+        <p class="gate__hint">
+          Camera chỉ được xử lý <strong>ngay trên máy của bạn</strong> — không có video nào rời khỏi trình duyệt.
+          <button class="linklike" type="button" id="btn-diag-gate">Camera không hoạt động?</button>
+        </p>
+        <p class="gate__note">Mẹo: nhấn <kbd>H</kbd> bất cứ lúc nào để xem lại hướng dẫn cử chỉ.</p>
+      </div>
+    </div>
+
+    <!-- ============ MODAL HƯỚNG DẪN ============ -->
+    <div class="modal" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+      <div class="modal__backdrop" data-close="help"></div>
+      <div class="modal__card">
+        <header class="modal__head">
+          <div>
+            <p class="modal__eyebrow">BẢNG CỬ CHỈ</p>
+            <h2 id="help-title">Điều khiển bằng cả 2 bàn tay</h2>
+          </div>
+          <button class="icon-btn" type="button" data-close="help" aria-label="Đóng">
+            <svg viewBox="0 0 24 24" fill="none"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </header>
+
+        <div class="modal__body">
+          <div class="help-grid">
+            <div class="help-item">
+              <div class="help-item__demo"><span class="help-item__keys"><i><svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px"><path d="M6.4 19.6v-5.2c0-1.3.4-2.2 1.3-3.2l.8-.9.8.9c.9 1 1.3 1.9 1.3 3.2v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.9 19.6v-5.2c0-1.3.4-2.2 1.3-3.2l.8-.9.8.9c.9 1 1.3 1.9 1.3 3.2v5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.3 20.4h13.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></i></span></div>
+              <b>Giơ cả 2 tay lên</b>
+              <em>Chuyển sang câu / slide tiếp theo</em>
+            </div>
+
+
+            <div class="help-item">
+              <div class="help-item__demo"><span class="help-item__keys"><i><svg viewBox="0 0 24 24" fill="none" style="width:16px;height:16px"><path d="M9.2 20v-6.2c0-1.4.5-2.4 1.4-3.5l.9-1 .9 1c.9 1.1 1.4 2.1 1.4 3.5V20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.4 20.6h7.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></i></span></div>
+              <b>Một tay chỉ để chọn đáp án</b>
+              <em>Giơ 1 tay sẽ KHÔNG chuyển câu (tránh nhận nhầm)</em>
+            </div>
+            <div class="help-item"><span class="help-item__keys"><i>A</i></span><b>Ngón cái chạm ngón trỏ</b><em>Chạm vào nhau → chọn A</em></div>
+            <div class="help-item"><span class="help-item__keys"><i>B</i></span><b>Ngón cái chạm ngón giữa</b><em>Chạm vào nhau → chọn B</em></div>
+            <div class="help-item"><span class="help-item__keys"><i>C</i></span><b>Ngón cái chạm ngón áp út</b><em>Chạm vào nhau → chọn C</em></div>
+            <div class="help-item"><span class="help-item__keys"><i>D</i></span><b>Ngón cái chạm ngón út</b><em>Chạm vào nhau → chọn D</em></div>
+            <div class="help-item">
+              <span class="help-item__keys"><i>?</i></span>
+              <b>Hiện đáp án</b><em>Nhấn phím R</em>
+            </div>
+            <div class="help-item">
+              <span class="help-item__keys"><i><svg viewBox="0 0 24 24" fill="none" style="width:17px;height:17px"><path d="M4 9.6h2.8L11 6.3v11.4L6.8 14.4H4z" fill="currentColor"/><path d="M14.4 9.2a3.8 3.8 0 0 1 0 5.6M16.8 6.8a7 7 0 0 1 0 10.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i></span>
+              <b>Búng tay</b>
+              <em>Phát video kết thúc toàn màn hình (cần bật mic)</em>
+            </div>
+          </div>
+
+          <div class="help-cols">
+            <div>
+              <h3>Phím tắt</h3>
+              <ul class="help-list">
+                <li><kbd>→</kbd> / <kbd>Space</kbd> slide tiếp theo (dự phòng khi không dùng camera)</li>
+                <li><kbd>←</kbd> slide trước</li>
+                <li><kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> chọn đáp án</li>
+                <li><kbd>R</kbd> hiện đáp án đúng</li>
+                <li><kbd>F</kbd> toàn màn hình · <kbd>S</kbd> âm thanh · <kbd>V</kbd> nền camera</li>
+                <li><kbd>E</kbd> chiếu video kết thúc · <kbd>H</kbd> mở/đóng bảng này · <kbd>Esc</kbd> đóng</li>
+              </ul>
+            </div>
+            <div>
+              <h3>Độ nhạy cử chỉ</h3>
+              <ul class="help-list">
+                <li>Dùng <strong>tay trái hay tay phải</strong> đều được — web theo dõi cả 2 tay cùng lúc.</li>
+                <li>Nếu chạm ngón mà không ăn → chọn mức <strong>Mạnh</strong> (ngưỡng chạm rộng hơn).</li>
+                <li>Nếu hay nhận nhầm đáp án → chọn mức <strong>Nhẹ</strong>.</li>
+                <li>Cả <strong>2 tay</strong> đều dùng được: chạm ngón ở tay nào cũng chọn được đáp án.</li>
+              </ul>
+              <div class="segmented" id="sens-select">
+                <button type="button" data-sens="soft">Nhẹ</button>
+                <button type="button" data-sens="normal" class="is-on">Vừa</button>
+                <button type="button" data-sens="strong">Mạnh</button>
+              </div>
+              <p class="help-mini" id="sens-status">Mức hiện tại: <b>Vừa (khuyên dùng)</b></p>
+
+              <h3 class="help-subhead">Tăng sáng khung hình</h3>
+              <p class="help-media">Bật khi phòng tối / camera mờ — giúp mô hình thấy tay rõ hơn.</p>
+              <div class="segmented" id="enhance-select">
+                <button type="button" data-enh="on" class="is-on">Bật</button>
+                <button type="button" data-enh="off">Tắt</button>
+              </div>
+
+              <h3 class="help-subhead">Âm thanh &amp; video kết thúc</h3>
+              <p class="help-media" id="media-status">Đang kiểm tra <code>dung/dung.mp3</code>, <code>sai/sai.mp3</code>, <code>end/outro.mp4</code>…</p>
+              <div class="segmented" id="snap-select">
+                <button type="button" data-snap="on">Bật mic (búng tay)</button>
+                <button type="button" data-snap="off" class="is-on">Tắt mic</button>
+              </div>
+              <p class="help-mini" id="snap-status">Búng tay cần quyền micro. Bấm phím <kbd>E</kbd> để chiếu video kết thúc.</p>
+              <p class="help-mini">Giơ cả 2 tay ở câu 7 → tới <b>slide 9</b>, video tự phát; giơ 2 tay lần nữa → bảng đáp án.</p>
+              <div class="help-buttons">
+                <button class="btn btn--ghost" type="button" id="btn-test-dung">NGHE THỬ ĐÚNG</button>
+                <button class="btn btn--ghost" type="button" id="btn-test-sai">NGHE THỬ SAI</button>
+              </div>
+
+              <button class="btn btn--ghost help-diag" type="button" id="btn-diag-help">MỞ CHẨN ĐOÁN CAMERA</button>
+            </div>
+          </div>
+
+          <div class="help-tip">
+            <b>Mẹo đứng trước camera:</b> đủ sáng, nền đơn giản, để cả bàn tay trong khung. Chạm hẳn 2 đầu ngón vào nhau rồi nhả ra; muốn chuyển câu thì <strong>giơ cả 2 tay</strong> lên trong khung hình.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video kết thúc: phát toàn màn hình khi búng tay (hoặc phím E) -->
+    <div class="endvideo" id="end-video" hidden>
+      <video id="end-video-el" playsinline preload="auto"></video>
+      <button class="endvideo__close" id="btn-end-close" type="button">ĐÓNG (Esc)</button>
+      <span class="endvideo__hint">BÚNG TAY ĐỂ CHIẾU LẠI · ESC ĐỂ ĐÓNG</span>
+    </div>
+
+    <noscript>
+      <div class="noscript">Trang cần JavaScript để chạy mini game. Hãy bật JavaScript rồi tải lại.</div>
+    </noscript>
+
+    <!-- Nếu JavaScript module không chạy (thường do mở index.html trực tiếp bằng file://),
+         hiện hướng dẫn thay vì để trang "chết" im lặng. -->
+    <div class="bootfail" id="bootfail" hidden>
+      <b>TRANG CHƯA CHẠY ĐƯỢC</b>
+      <p>
+        Trình duyệt chặn JavaScript dạng module khi mở trực tiếp bằng <code>file://</code>.
+      </p>
+      <ul>
+        <li>Cách 1: mở file <code>preview.html</code> (bản 1 tệp, chạy được ngay, camera tính năng đầy đủ khi mở qua localhost).</li>
+        <li>Cách 2: chạy <code>npm start</code> → mở <code>http://localhost:3000</code>.</li>
+        <li>Cách 3: đưa lên GitHub Pages rồi mở link <code>https://…</code>.</li>
+      </ul>
+      <button type="button" onclick="location.href='preview.html'">MỞ BẢN PREVIEW.HTML</button>
+    </div>
+
+    <script>
+      // Nếu sau 2,5 giây app chưa khởi động → hiện hướng dẫn.
+      window.setTimeout(function () {
+        if (!window.__APP_BOOTED__) {
+          var box = document.getElementById('bootfail');
+          if (box) box.hidden = false;
+        }
+      }, 2500);
+    </script>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
