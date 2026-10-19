@@ -1,0 +1,211 @@
+/* ==========================================================================
+   animations.css — toàn bộ keyframes & hiệu ứng chuyển động
+   ========================================================================== */
+
+@keyframes gridDrift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(62px, 62px, 0); }
+}
+
+@keyframes blobFloat {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(3vw, 2vh, 0) scale(1.06); }
+  100% { transform: translate3d(-2vw, 4vh, 0) scale(0.97); }
+}
+
+@keyframes eqFloat {
+  0% { transform: translate3d(0, 0, 0) rotate(-1.5deg); opacity: 0.5; }
+  100% { transform: translate3d(12px, -26px, 0) rotate(1.5deg); opacity: 1; }
+}
+
+@keyframes gateIn {
+  from { opacity: 0; transform: translateY(26px) scale(0.97); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes flaskBob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-7px) rotate(1.5deg); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.45; transform: scale(0.99); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-10px) scale(0.97); }
+}
+
+@keyframes scanLine {
+  0%, 100% { top: -26%; opacity: 0.4; }
+  50% { top: 100%; opacity: 1; }
+}
+
+@keyframes flashGood {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes flashBad {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes tileFloat {
+  0%, 100% { transform: translateY(0) rotate(var(--tile-rot, -7deg)); }
+  50% { transform: translateY(-12px) rotate(calc(var(--tile-rot, -7deg) + 2deg)); }
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(26px); filter: blur(5px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+@keyframes riseInSoft {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes optionIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes optionNudge {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(94, 242, 192, 0); }
+  50% { box-shadow: 0 0 0 3px rgba(94, 242, 192, 0.16); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  16% { transform: translateX(-7px); }
+  32% { transform: translateX(6px); }
+  48% { transform: translateX(-4px); }
+  64% { transform: translateX(3px); }
+  80% { transform: translateX(-2px); }
+}
+
+@keyframes popGood {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.025); }
+  100% { transform: scale(1); }
+}
+
+@keyframes badgePop {
+  0% { opacity: 0; transform: scale(0.5) rotate(-16deg); }
+  60% { opacity: 1; transform: scale(1.08) rotate(4deg); }
+  100% { transform: none; }
+}
+
+@keyframes swipeDemo {
+  0%, 22% { transform: translateX(-8px); opacity: 0.65; }
+  55%, 100% { transform: translateX(12px); opacity: 1; }
+}
+
+@keyframes arrowDemo {
+  0%, 22% { transform: translateX(-3px); opacity: 0.3; }
+  55%, 100% { transform: translateX(4px); opacity: 1; }
+}
+
+@keyframes scoreBump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.16); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ripple {
+  from { transform: scale(0.4); opacity: 0.55; }
+  to { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes cardGlow {
+  0%, 100% { box-shadow: var(--shadow-lg), 0 0 0 0 rgba(94, 242, 192, 0); }
+  50% { box-shadow: var(--shadow-lg), 0 0 60px -12px rgba(94, 242, 192, 0.35); }
+}
+
+/* --------------------------------------------------- hiệu ứng vào slide */
+.slide.is-active [data-anim] {
+  animation: riseIn 0.72s var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.slide.is-active .q-option[data-anim] {
+  animation-name: optionIn;
+}
+
+.slide.is-active .intro__art {
+  animation: riseInSoft 0.9s var(--ease-out) both;
+  animation-delay: 180ms;
+}
+
+/* nhịp thở nhẹ cho thẻ câu hỏi đang chờ trả lời */
+.slide.is-active .question.is-waiting {
+  animation: cardGlow 5.5s ease-in-out infinite;
+}
+
+.q-option.is-correct {
+  animation: popGood 0.5s var(--ease-out);
+}
+
+.q-option.is-wrong {
+  animation: shake 0.5s ease-in-out;
+}
+
+.q-score.is-bump b {
+  animation: scoreBump 0.5s var(--ease-out);
+}
+
+/* ---------------------------------------------------------- tôn trọng a11y */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Vòng sáng lan toả ở slide video kết thúc */
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.82);
+    opacity: 0;
+  }
+  22% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
